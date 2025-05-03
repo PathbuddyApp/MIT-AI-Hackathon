@@ -33,4 +33,4 @@ All content generation happens live in your session. No personal data is stored.
 
 ---
 
-Built to make learning more fun, fast, and friendly. ~ The Pathbuddy Team
+Built to make learning more fun, fast, and friendly! ~ The Pathbuddy Team
