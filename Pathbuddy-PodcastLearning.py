@@ -11,7 +11,7 @@ from langchain.chains import LLMChain
 
 # --- OpenAI ---
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-llm = ChatOpenAI(temperature=0.7, openai_api_key=openai_key)  # For LangChain
+llm = ChatOpenAI(temperature=0.7, openai_api_key=st.secrets["OPENAI_API_KEY"])  # For LangChain
 
 # --- LangChain: Dynamic Topic Suggestion Chain ---
 suggest_prompt = PromptTemplate(
