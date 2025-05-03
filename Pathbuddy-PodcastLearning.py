@@ -9,7 +9,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-# --- OpenAI Clients ---
+# --- OpenAI ---
 openai_key = st.secrets["OPENAI_API_KEY"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 response = openai.ChatCompletion.create(...)  # or other relevant function
@@ -104,7 +104,7 @@ Make it:
 
 Begin the script:
 """
-    response = client.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.8,
@@ -114,7 +114,7 @@ Begin the script:
 
 # --- Audio Generator ---
 def generate_audio(script_text, voice="nova", speed=1.0):
-    audio_response = client.audio.speech.create(
+    audio_response = openai.Audio.speech.create(
         model="tts-1",
         voice=voice,
         input=script_text,
@@ -125,14 +125,13 @@ def generate_audio(script_text, voice="nova", speed=1.0):
 # --- Cover Image Generator ---
 def generate_image(topics):
     prompt = f"A square podcast cover representing the topic: {topics[0]}. Modern, colorful, education-themed, minimal design."
-    image = client.images.generate(
-        model="dall-e-3",
+    image = openai.Image.create(
         prompt=prompt,
+        n=1,
         size="1024x1024",
-        quality="standard",
-        n=1
-    )
-    return image.data[0].url
+         response_format="url",
+            )
+    return image["data"][0]["url"]
 
 # --- Audio Player + Cover Image ---
 def audio_player_basic(audio_bytes, cover_url):
