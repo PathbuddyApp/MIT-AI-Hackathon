@@ -15,20 +15,22 @@
 
 ---
 
-## 🛠️ Technologies Used
 
-- [Streamlit](https://streamlit.io/)
-- [OpenAI GPT-4](https://platform.openai.com/)
-- [OpenAI Text-to-Speech (TTS)](https://platform.openai.com/docs/guides/text-to-speech)
-- [DALL·E 3](https://openai.com/dall-e-3)
-- [LangChain](https://www.langchain.com/)
-- Python
+##🛠️ Technologies Used
+
+- [Streamlit](https://streamlit.io/) – App framework
+- [OpenAI GPT-4](https://platform.openai.com/docs) – Script & suggestions
+- [OpenAI TTS](https://platform.openai.com/docs/guides/text-to-speech) – Voice generation
+- [DALL·E](https://platform.openai.com/docs/guides/images) – Cover image creation
+- [LangChain](https://www.langchain.com/) – Topic suggestion chain
+- Python 
 
 ---
 
-## 📦 Setup Instructions
+## 🛡️ Privacy
 
-1. **Clone the repo**:
-   ```bash
-   git clone https://github.com/yourusername/mindwaves.git
-   cd mindwaves
+All content generation happens live in your session. No personal data is stored.
+
+---
+
+Built to make learning more fun, fast, and friendly. ~ The Pathbuddy Team
