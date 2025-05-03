@@ -5,10 +5,29 @@ import os
 import random
 import base64
 
-# --- OpenAI Client ---
-client = OpenAI(api_key="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")
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
 
-# --- Default Suggestions ---
+# --- OpenAI Clients ---
+client = OpenAI(api_key="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")  # Replace with your key
+llm = ChatOpenAI(temperature=0.7, openai_api_key="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")  # For LangChain
+
+# --- LangChain: Dynamic Topic Suggestion Chain ---
+suggest_prompt = PromptTemplate(
+    input_variables=["topics"],
+    template="""
+You are an education-focused AI. Given the following list of topics the user is interested in:
+
+{topics}
+
+Suggest 6 additional unique and diverse but *related* educational podcast topics. Avoid repeating any of the original ones. Make them engaging and specific.
+Only return a list of topic titles, no explanations.
+"""
+)
+suggest_chain = LLMChain(llm=llm, prompt=suggest_prompt)
+
+# --- Default Suggestions Fallback ---
 default_suggestions = [
     "Quantum Computing", "What is Inflation?", "Basics of Machine Learning",
     "History of the Internet", "Climate Change", "How Blockchain Works",
@@ -23,30 +42,15 @@ if "questions" not in st.session_state:
 if "suggestions" not in st.session_state:
     st.session_state["suggestions"] = random.sample(default_suggestions, 6)
 
-# --- User Interest Mapping ---
-interest_tags = {
-    "tech": ["AI", "Machine Learning", "Neural", "Computing", "Internet", "Blockchain"],
-    "science": ["Quantum", "Physics", "Chemistry", "Biology", "Nutrition", "Climate"],
-    "history": ["History", "Revolution", "War", "Ancient"],
-    "space": ["Space", "NASA", "Rockets", "Astronomy", "Mars"],
-    "economics": ["Inflation", "Economics", "Finance", "Money"],
-}
-
-# --- Detect Interests from Questions ---
-def get_user_interests(questions):
-    tags = set()
-    for q in questions:
-        for tag, keywords in interest_tags.items():
-            if any(k.lower() in q.lower() for k in keywords):
-                tags.add(tag)
-    return tags
-
-# --- Personalized Suggestion Update ---
+# --- Suggestion Update Using LangChain ---
 def update_suggestions():
-    tags = get_user_interests(st.session_state["questions"])
-    if tags:
-        related = [s for s in default_suggestions if any(t in s for tag in tags for t in interest_tags[tag])]
-        st.session_state["suggestions"] = random.sample(set(related), min(6, len(related)))
+    current = st.session_state["questions"]
+    if current:
+        input_str = ", ".join(current)
+        raw_output = suggest_chain.run({"topics": input_str})
+        suggestions = [s.strip("-• ").strip() for s in raw_output.split("\n") if s.strip()]
+        suggestions = [s for s in suggestions if s not in current]
+        st.session_state["suggestions"] = suggestions[:6] if suggestions else random.sample(default_suggestions, 6)
     else:
         st.session_state["suggestions"] = random.sample(default_suggestions, 6)
 
@@ -69,7 +73,7 @@ st.markdown("💡 **Topic Suggestions:**")
 cols = st.columns(6)
 for i, topic in enumerate(st.session_state["suggestions"]):
     if cols[i].button(topic):
-        if len(st.session_state["questions"]) < 6:
+        if len(st.session_state["questions"]) < 6 and topic not in st.session_state["questions"]:
             st.session_state["questions"].append(topic)
             update_suggestions()
 
@@ -82,7 +86,7 @@ for i in range(6):
 
 st.session_state["questions"] = new_questions
 
-# --- Script Generator ---
+# --- Podcast Script Generator ---
 def generate_script(topic, max_tokens=300):
     prompt = f"""
 You're writing a podcast between two hosts: Alex and Sam.
