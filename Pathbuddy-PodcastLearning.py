@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 from io import BytesIO
 import os
 import random
@@ -10,7 +10,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
 # --- OpenAI ---
-openai_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 llm = ChatOpenAI(temperature=0.7, openai_api_key=openai_key)  # For LangChain
 
@@ -103,7 +103,7 @@ Make it:
 
 Begin the script:
 """
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.8,
@@ -113,24 +113,25 @@ Begin the script:
 
 # --- Audio Generator ---
 def generate_audio(script_text, voice="nova", speed=1.0):
-    audio_response = openai.Audio.speech.create(
+    response = client.audio.speech.create(
         model="tts-1",
         voice=voice,
         input=script_text,
         speed=speed
     )
-    return BytesIO(audio_response.content)
+    return BytesIO(response.content)
 
 # --- Cover Image Generator ---
 def generate_image(topics):
     prompt = f"A square podcast cover representing the topic: {topics[0]}. Modern, colorful, education-themed, minimal design."
-    image = openai.Image.create(
-        prompt=prompt,
-        n=1,
-        size="1024x1024",
-         response_format="url",
-            )
-    return image["data"][0]["url"]
+    image = client.images.generate(
+    model="dall-e-3",
+    prompt=prompt,
+    size="1024x1024",
+    quality="standard",
+    n=1
+    )
+    return image.data[0].url
 
 # --- Audio Player + Cover Image ---
 def audio_player_basic(audio_bytes, cover_url):
