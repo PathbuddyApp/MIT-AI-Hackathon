@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 from io import BytesIO
 import os
 import random
@@ -11,7 +11,8 @@ from langchain.chains import LLMChain
 
 # --- OpenAI Clients ---
 openai_key = st.secrets["OPENAI_API_KEY"]
-client = OpenAI(api_key=openai_key)  #OpenAI key
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+response = openai.ChatCompletion.create(...)  # or other relevant function
 llm = ChatOpenAI(temperature=0.7, openai_api_key=openai_key)  # For LangChain
 
 # --- LangChain: Dynamic Topic Suggestion Chain ---
