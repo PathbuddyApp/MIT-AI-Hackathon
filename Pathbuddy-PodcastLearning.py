@@ -10,8 +10,9 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
 # --- OpenAI Clients ---
-client = OpenAI(api_key="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")  # Replace with your key
-llm = ChatOpenAI(temperature=0.7, openai_api_key="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")  # For LangChain
+openai_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=openai_key)  #OpenAI key
+llm = ChatOpenAI(temperature=0.7, openai_api_key=openai_key)  # For LangChain
 
 # --- LangChain: Dynamic Topic Suggestion Chain ---
 suggest_prompt = PromptTemplate(
