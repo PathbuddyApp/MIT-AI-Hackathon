@@ -12,7 +12,6 @@ from langchain.chains import LLMChain
 # --- OpenAI ---
 openai_key = st.secrets["OPENAI_API_KEY"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-response = openai.ChatCompletion.create(...)  # or other relevant function
 llm = ChatOpenAI(temperature=0.7, openai_api_key=openai_key)  # For LangChain
 
 # --- LangChain: Dynamic Topic Suggestion Chain ---
